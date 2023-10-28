@@ -1,4 +1,3 @@
-import User.Info;
 import java.util.ArrayList;
 
 public class DecisionTree {

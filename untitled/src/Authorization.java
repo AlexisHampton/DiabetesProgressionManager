@@ -1,5 +1,3 @@
-package User;
-
 public class Authorization {
 
     boolean Login(int userID){

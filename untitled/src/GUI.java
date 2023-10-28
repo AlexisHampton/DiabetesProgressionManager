@@ -1,8 +1,3 @@
-package User;
-
-import User.Patient;
-import User.User;
-
 public class GUI {
 
     public static void RenderPatientInfo(Patient patient)

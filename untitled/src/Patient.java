@@ -1,5 +1,3 @@
-package User;
-
 public class Patient {
 
     private Info info;

@@ -1,10 +1,9 @@
-import User.Info;
 import java.util.ArrayList;
-
 public abstract class Node {
 
-    ArrayList<Info> dataPoints = new ArrayList<>();
+    ArrayList<Info> dataPoints = new ArrayList<Info>();
     ArrayList<Node> children = new ArrayList<>();
+    ArrayList<Leaf> leaves = new ArrayList<Leaf>();
 
     void Branch(int featureIndex)//features go up here
     {
@@ -30,6 +29,10 @@ public abstract class Node {
     float CalculateScore()
     {
         return 0;
+    }
+
+    void CreateLeaf(boolean value)
+    {
     }
 
 }
