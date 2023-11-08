@@ -1,7 +1,8 @@
+import java.util.ArrayList;
+
 public class Info {
     public int age;
     public int sex;
-    public float bloodSugarLevels;
     public float BMI;
     public float bloodPressure;
     public float totalSerumCholesterol;
@@ -9,7 +10,10 @@ public class Info {
     public float highDensityLipoproteins;
     public float totalCholesterol;
     public float possibilityLogOfSerumTriglyceridesLevel;
+    public float bloodSugarLevels;
     public boolean isDiseaseProgressionGood;
+
+    public ArrayList<Float> data = new ArrayList<Float>();
 
     public Info(int age, int sex, float BMI, float bloodPressure,
                 float totalSerumCholesterol, float lowDensityLipoproteins, float highDensityLipoproteins,
@@ -27,7 +31,22 @@ public class Info {
         this.possibilityLogOfSerumTriglyceridesLevel = possibilityLogOfSerumTriglyceridesLevel;
         this.bloodSugarLevels = bloodSugarLevels;
         this.isDiseaseProgressionGood = isDiseaseProgressionGood;
+
+        data.add((float) age);
+        data.add((float) sex);
+        data.add( BMI);
+        data.add(bloodPressure);
+        data.add(totalCholesterol);
+        data.add(lowDensityLipoproteins);
+        data.add(highDensityLipoproteins);
+        data.add(totalCholesterol);
+        data.add( possibilityLogOfSerumTriglyceridesLevel);
+        data.add(bloodSugarLevels);
+        float IDPG = isDiseaseProgressionGood ? 1 : 0;
+        data.add(IDPG);
     }
+
+
 
     @Override
     public String toString() {

@@ -10,11 +10,15 @@ public class Main {
     public static void main(String[] args) {
         //parse diabetes info into info
         ParseData();
-
+/*
         for(int i = 0; i < allInfo.size(); i++)
             System.out.println(allInfo.get(i).toString());
-
+*/
         //create tree
+        DecisionTreeManager decisionTreeManager = new DecisionTreeManager(allInfo);
+        decisionTreeManager.CreateDecisionTrees();
+
+
     }
 
     public static void ParseData()
