@@ -12,13 +12,11 @@ public class Main {
         ParseData();
 /*
         for(int i = 0; i < allInfo.size(); i++)
-            System.out.println(allInfo.get(i).toString());
+            System.out.println(allInfo.geta(i).toString());
 */
-        //create tree
+        //create tree/
         DecisionTreeManager decisionTreeManager = new DecisionTreeManager(allInfo);
-        decisionTreeManager.CreateDecisionTrees();
-
-
+        decisionTreeManager.CreateRandomForest();
     }
 
     public static void ParseData()

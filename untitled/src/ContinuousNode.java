@@ -21,7 +21,7 @@ public class ContinuousNode extends DecisionTreeNode {
 
     public ArrayList<DecisionTreeNode> Branch() {
 
-        System.out.println("split:" + splitCriteria);
+        //System.out.println("split:" + splitCriteria);
         for (int i = 0; i < 2; i++) {
             DecisionTreeNode node = new DecisionTreeNode(new ArrayList<Info>());
             node.childIndex = i;
@@ -35,7 +35,7 @@ public class ContinuousNode extends DecisionTreeNode {
             super.children.get(nodeIndex).dataPoints.add(super.dataPoints.get(i));
         }
 
-        System.out.println("CN children first "+ super.children.get(0).dataPoints.size() + " second " + super.children.get(1).dataPoints.size());
+        //System.out.println("CN children first "+ super.children.get(0).dataPoints.size() + " second " + super.children.get(1).dataPoints.size());
 
         //make leaves if neccessary
         super.CreateLeaves();
@@ -62,8 +62,11 @@ public class ContinuousNode extends DecisionTreeNode {
         currentFeature = feature;
         super.dataPoints.sort(new DataPointComparator());
 
-        //get the averages of every 2 ages.
         ArrayList<Float> averageDatapoints = new ArrayList<>();
+
+        //get the averages of every 2 ages.
+        if(super.dataPoints.size() == 1)
+            averageDatapoints.add(super.dataPoints.get(0).data.get(feature));
         for (int i = 1; i < super.dataPoints.size(); i++) {
             float total = super.dataPoints.get(i - 1).data.get(feature) + super.dataPoints.get(i).data.get(feature);
             averageDatapoints.add(total / 2);

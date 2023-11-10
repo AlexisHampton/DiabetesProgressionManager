@@ -42,8 +42,15 @@ public class Info {
         data.add(totalCholesterol);
         data.add( possibilityLogOfSerumTriglyceridesLevel);
         data.add(bloodSugarLevels);
-        float IDPG = isDiseaseProgressionGood ? 1 : 0;
-        data.add(IDPG);
+    }
+
+    public void FillMissingData()
+    {
+        //check for 0 values
+        for(int i = 0; i < data.size();i++)
+            if(data.get(i) == 0)
+                //replace 0s with the median
+                data.set(i, DecisionTreeManager.GetAverage(i));
     }
 
 

@@ -5,12 +5,12 @@ public class DecisionTree {
     int maxDepth = 6;
     int maxLeaves = 5;
     int leaves, depth = 0;
-    int dataSplitIndex;
-    float[] featuresIndicies;
+    int[] featuresIndicies;
+    ArrayList<Integer> featuresUsed = new ArrayList<Integer>();
 
     DecisionTreeNode root;
 
-    public DecisionTree(float[] fi, ArrayList<Info> td) {
+    public DecisionTree(int[] fi, ArrayList<Info> td) {
         featuresIndicies = fi;
         trainingData = td;
     }
@@ -58,6 +58,7 @@ public class DecisionTree {
 
         //make root cat or cont
         while (!heap.isEmpty() && maxLeaves != leaves && maxDepth != depth) {
+            featuresIndicies = DecisionTreeManager.GetFeatureIndicies(featuresUsed);
             //System.out.println("heap b4 branch: " + heap.size());
             DecisionTreeNode node = heap.poll();
             DecisionTreeNode bestNode = FindBestFeature(node);
@@ -79,13 +80,13 @@ public class DecisionTree {
         //ArrayList<Float> impurities = new ArrayList<Float>();
         for (int f = 0; f < featuresIndicies.length; f++) {
             //need to create leaves depending on wheter dp is cat or cont
-            if (DecisionTreeManager.catFeatures.contains(f)) {
+            if (DecisionTreeManager.catFeatures.contains(featuresIndicies[f])) {
                 CategoricalNode catNode = new CategoricalNode(treeNode);
-                impurities.put(catNode, catNode.CalculateTotalGIForTempLeaves(f));
+                impurities.put(catNode, catNode.CalculateTotalGIForTempLeaves(featuresIndicies[f]));
                // System.out.println("catfeat: " + f + " tgi: " + catNode.CalculateTotalGIForTempLeaves(f));
             } else {
                 ContinuousNode contNode = new ContinuousNode(treeNode);
-                impurities.put(contNode, contNode.CalculateTotalGiniImpurity(f));
+                impurities.put(contNode, contNode.CalculateTotalGiniImpurity(featuresIndicies[f]));
                // System.out.println("contfeat: " + f + " tgi: " + contNode.CalculateTotalGiniImpurity(f));
 
             }
@@ -105,12 +106,14 @@ public class DecisionTree {
 
     void Branch(DecisionTreeNode bestNode, PriorityQueue<DecisionTreeNode> heap){
         ArrayList<DecisionTreeNode> children = new ArrayList<DecisionTreeNode>();
-        String meow = "Build Tree: bestNode ";
+        //String meow = "Build Tree: bestNode ";
         if (bestNode instanceof CategoricalNode) {
-            System.out.println(meow + ((CategoricalNode) bestNode).toString());
+            featuresUsed.add(1);
+           // System.out.println(meow + ((CategoricalNode) bestNode).toString());
             children = ((CategoricalNode) bestNode).Branch();
         } else {
-            System.out.println(meow + ((ContinuousNode) bestNode).toString());
+            featuresUsed.add(((ContinuousNode) bestNode).currentFeature);
+            //System.out.println(meow + ((ContinuousNode) bestNode).toString());
             children = ((ContinuousNode) bestNode).Branch();
         }
 

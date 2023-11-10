@@ -50,7 +50,7 @@ public class DecisionTreeNode implements Comparable<DecisionTreeNode>{
     int CanMakeLeaf() {
         int yes = CountOutput();
         int no = dataPoints.size() - yes;
-        System.out.println("y:" + yes + " n:" + no);
+       // System.out.println("y:" + yes + " n:" + no);
         if(yes == 0 && no == 0) return -1;
         if(yes == 0 || no == 0) return 1;
         return 0;
