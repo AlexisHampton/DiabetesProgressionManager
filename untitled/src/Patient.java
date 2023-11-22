@@ -13,7 +13,7 @@ public class Patient {
 
     boolean PredictDiseaseProgression()
     {
-        return DecisionTreeManager.randomForest.GetPrediction(info);
+        return RandomForest.GetPrediction(info);
     }
 
     void FillMissingData()

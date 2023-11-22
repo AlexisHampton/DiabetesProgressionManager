@@ -13,13 +13,16 @@ public class Info {
     public float bloodSugarLevels;
     public boolean isDiseaseProgressionGood;
 
+    //every variable but in a list
     public ArrayList<Float> data = new ArrayList<Float>();
 
+    //Initializes an Info class based on all of the data neccessary for a patient
     public Info(int age, int sex, float BMI, float bloodPressure,
                 float totalSerumCholesterol, float lowDensityLipoproteins, float highDensityLipoproteins,
                 float totalCholesterol, float possibilityLogOfSerumTriglyceridesLevel, float bloodSugarLevels,
                 boolean isDiseaseProgressionGood)
     {
+        //variables might be used in User and Patient classes
         this.age = age;
         this.sex = sex;
         this.BMI  = BMI;
@@ -32,6 +35,7 @@ public class Info {
         this.bloodSugarLevels = bloodSugarLevels;
         this.isDiseaseProgressionGood = isDiseaseProgressionGood;
 
+        //data is used by the decisionTree class
         data.add((float) age);
         data.add((float) sex);
         data.add( BMI);
@@ -44,17 +48,16 @@ public class Info {
         data.add(bloodSugarLevels);
     }
 
+    //Replaces each 0 with an average
     public void FillMissingData()
     {
-        //check for 0 values
         for(int i = 0; i < data.size();i++)
             if(data.get(i) == 0)
-                //replace 0s with the median
-                data.set(i, DecisionTreeManager.GetAverage(i));
+                data.set(i, RandomForest.GetAverage(i));
     }
 
-
-
+    //Returns a string of the class as a string
+    //useful for writing to files
     @Override
     public String toString() {
         return age + " " + sex + " " + BMI + " " + bloodPressure + " " + totalSerumCholesterol + " " + lowDensityLipoproteins

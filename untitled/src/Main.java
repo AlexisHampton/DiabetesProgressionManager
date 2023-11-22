@@ -15,8 +15,8 @@ public class Main {
             System.out.println(allInfo.geta(i).toString());
 */
         //create tree/
-        DecisionTreeManager decisionTreeManager = new DecisionTreeManager(allInfo);
-        decisionTreeManager.CreateRandomForest();
+        RandomForest randomForest = new RandomForest(allInfo);
+        randomForest.CreateRandomForest();
     }
 
     public static void ParseData()

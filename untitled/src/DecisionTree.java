@@ -1,98 +1,107 @@
 import java.util.*;
 
+//Class DecisionTree trains a DecisionTree, Traverses it to get a prediction, and then Tests it to see its correctness
 public class DecisionTree {
+
     ArrayList<Info> trainingData;
+    ArrayList<Info> testingData = new ArrayList<Info>();
+    ArrayList<Integer> trainingDataIndicies = new ArrayList<>();
+
     int maxDepth = 6;
     int maxLeaves = 5;
     int leaves, depth = 0;
-    int[] featuresIndicies;
+    int[] featuresIndicies; //the features that have been selected to train the dt
+
+    int maxFeatures;
+
+    static Random random = new Random();
+
     ArrayList<Integer> featuresUsed = new ArrayList<Integer>();
 
     DecisionTreeNode root;
 
-    public DecisionTree(int[] fi, ArrayList<Info> td) {
-        featuresIndicies = fi;
+    //Initializes a DecisionTree with the max features, training Data and training data indicies, and builds the tree
+    public DecisionTree(int mf, ArrayList<Info> td, ArrayList<Integer> tdi) {
+        maxFeatures = mf;
         trainingData = td;
+        trainingDataIndicies = tdi;
+        featuresIndicies = GetFeatureIndicies();
+        BuildTree();
     }
 
+    //returns a boolen prediction from the decision tree using a specified Info
     public boolean GetPrediction(Info info) {
         boolean prediction = false;
         DecisionTreeNode curr = root;
+
         while (curr != null) {
-            //System.out.println("Jimin");
-            //check children null here
             int index = 0;
-            //leaves null here
+
             if (curr instanceof CategoricalNode)
-                index = (int) (info.data.get(1) - 1);
-            else if (curr instanceof  ContinuousNode)
+                index = (int) (info.data.get(1) - 1); //gets the sex of the patient and subtracts one to get the index
+            else if (curr instanceof ContinuousNode)
                 index = ((ContinuousNode) curr).GetChildIndex(info);
-            else
+            else //curr is a DecisionTreeNode that hasn't been processed
                 return curr.LeafPrediction();
 
-            if(curr.children.get(index) == null) {
+            //if current node does not have this child, then check the leaves
+            if (curr.children.get(index) == null) {
                 for (int i = 0; i < curr.leaves.size(); i++)
                     if (curr.leaves.get(i).index == index)
                         return curr.leaves.get(i).isDiseaseProgressionGood;
+                //if neither leaf exists, curr likely wasn't processed yet, so return its prediction
                 return curr.LeafPrediction();
-            }
-            else {
+            } else { //otherwise continue traversing through the children
                 curr = curr.children.get(index);
-                //System.out.println("Is Yoongi gettting a child? " + index + "what kind: " + (curr instanceof ContinuousNode) + " " + (curr instanceof  CategoricalNode));
             }
 
         }
-
+        //if curr is somehow null but likelier to not get a runtime error:
         return prediction;
     }
 
-
+    //Builds and returns a DecisionTree based on the best features
     public DecisionTree BuildTree() {
         PriorityQueue<DecisionTreeNode> heap = new PriorityQueue<DecisionTreeNode>();
 
         root = new DecisionTreeNode(trainingData);
         root = FindBestFeature(root);
         Branch(root, heap);
-        //System.out.println("rc: " + root.children.size());
-        //System.out.println("heap b4 branch: " + heap.size());
 
-        //make root cat or cont
         while (!heap.isEmpty() && maxLeaves != leaves && maxDepth != depth) {
-            featuresIndicies = DecisionTreeManager.GetFeatureIndicies(featuresUsed);
-            //System.out.println("heap b4 branch: " + heap.size());
+            //generates new feature Indicies for each node so long as they haven't been used
+            featuresIndicies = GetFeatureIndicies(featuresUsed);
             DecisionTreeNode node = heap.poll();
             DecisionTreeNode bestNode = FindBestFeature(node);
-            //System.out.println("b4 branch null p: " + (bestNode.parent == null));
             Branch(bestNode, heap);
-            //System.out.println("aft branch null p: " + (bestNode.parent == null));
-            //System.out.println("heap aft branch: " + heap.size());
             UpdateChildren(bestNode.parent, bestNode);
-
         }
+
         return this;
     }
 
+    //Finds the best DecisionTreeNode to branch on based on it's total Gini Impurity and returns it
     DecisionTreeNode FindBestFeature(DecisionTreeNode treeNode) {
-        //Branches on each feature and calculates impurity for each branch
         DecisionTreeNode bestTreeNode = null;
         float bestImpurity = Float.MAX_VALUE;
+        //If we didn't have a dictionary, we'd need two different ArrayLists
+        //Also dictionaries are easier to understand
         Dictionary<DecisionTreeNode, Float> impurities = new Hashtable<DecisionTreeNode, Float>();
-        //ArrayList<Float> impurities = new ArrayList<Float>();
+
         for (int f = 0; f < featuresIndicies.length; f++) {
-            //need to create leaves depending on wheter dp is cat or cont
-            if (DecisionTreeManager.catFeatures.contains(featuresIndicies[f])) {
+            //if the feature is categorical
+            if (RandomForest.catFeatures.contains(featuresIndicies[f])) {
                 CategoricalNode catNode = new CategoricalNode(treeNode);
-                impurities.put(catNode, catNode.CalculateTotalGIForTempLeaves(featuresIndicies[f]));
-               // System.out.println("catfeat: " + f + " tgi: " + catNode.CalculateTotalGIForTempLeaves(f));
-            } else {
+                impurities.put(catNode, catNode.CalculateTotalGiniImpurity(featuresIndicies[f]));
+            } else { //if feature is continuous
                 ContinuousNode contNode = new ContinuousNode(treeNode);
                 impurities.put(contNode, contNode.CalculateTotalGiniImpurity(featuresIndicies[f]));
-               // System.out.println("contfeat: " + f + " tgi: " + contNode.CalculateTotalGiniImpurity(f));
-
             }
         }
 
+        //to interate over the dictionary
         Enumeration<DecisionTreeNode> n = impurities.keys();
+        //finds the best impurity which is the lowest impurity
         while (n.hasMoreElements()) {
             DecisionTreeNode key = n.nextElement();
             if (impurities.get(key) < bestImpurity) {
@@ -104,30 +113,80 @@ public class DecisionTree {
         return bestTreeNode;
     }
 
-    void Branch(DecisionTreeNode bestNode, PriorityQueue<DecisionTreeNode> heap){
+    //Branches on a given node and adds all new DecisionTreeNodes to the heap
+    void Branch(DecisionTreeNode bestNode, PriorityQueue<DecisionTreeNode> heap) {
         ArrayList<DecisionTreeNode> children = new ArrayList<DecisionTreeNode>();
-        //String meow = "Build Tree: bestNode ";
         if (bestNode instanceof CategoricalNode) {
             featuresUsed.add(1);
-           // System.out.println(meow + ((CategoricalNode) bestNode).toString());
             children = ((CategoricalNode) bestNode).Branch();
-        } else {
+        } else { //then continuous
             featuresUsed.add(((ContinuousNode) bestNode).currentFeature);
-            //System.out.println(meow + ((ContinuousNode) bestNode).toString());
             children = ((ContinuousNode) bestNode).Branch();
         }
 
         for (int i = 0; i < children.size(); i++)
             if (children.get(i) != null)
                 heap.add(children.get(i));
-            else
+            else //if no children, then have leaves
                 leaves++;
-        if (!children.isEmpty()) depth++;
+        if (!children.isEmpty())
+            depth++; //this is wrong because it doesn't calulate the actual depth so it does need to be moved
     }
 
-    void UpdateChildren(DecisionTreeNode parent, DecisionTreeNode child){
-        parent.children.set(child.childIndex,child);
+    //Makes parents aware of their new children
+    //adds the children to the parent's childrenList
+    void UpdateChildren(DecisionTreeNode parent, DecisionTreeNode child) {
+        parent.children.set(child.childIndex, child);
     }
+
+    //Tests the decision Tree and prints its accuracy
+    public void TestDecisionTree() {
+        GetTestingData();
+        int correct = 0;
+        for (int i = 0; i < testingData.size(); i++) {
+            boolean pred = GetPrediction(testingData.get(i));
+            if (pred == testingData.get(i).isDiseaseProgressionGood)
+                correct++;
+        }
+
+        System.out.println("correct: " + correct + " total: " + testingData.size() + " r:" + (correct / (float) testingData.size()));
+    }
+
+    //Populates the TestingData list with data not in the trainingData
+    void GetTestingData() {
+        for (int i = 0; i < RandomForest.allData.size(); i++) {
+            if (!trainingDataIndicies.contains(i)) {
+                testingData.add(RandomForest.allData.get(i));
+            }
+        }
+    }
+
+    //Returns a random feature index that has not been used already
+    int GetRandomFeature(ArrayList<Integer> featuresUsed) {
+        int num = random.nextInt(10);
+        //if all features have been used, start over
+        if(featuresUsed.size() == 10) featuresUsed.clear();
+        if (featuresUsed == null || featuresUsed.contains(num))
+            return GetRandomFeature(featuresUsed);
+        return num; //return rand feature index
+    }
+
+    //Returns an array of indicies for features based on the features already used
+    int[] GetFeatureIndicies(ArrayList<Integer> featuresUsed) {
+        int[] fi = new int[maxFeatures];
+        for (int i = 0; i < maxFeatures; i++)
+            fi[i] = GetRandomFeature(featuresUsed);
+        return fi;
+    }
+
+    //Returns an array of indicies for features
+    int[] GetFeatureIndicies() {
+        int[] fi = new int[maxFeatures];
+        for (int i = 0; i < maxFeatures; i++)
+            fi[i] = random.nextInt(10);
+        return fi;
+    }
+
 
     public void Validate() {
 
