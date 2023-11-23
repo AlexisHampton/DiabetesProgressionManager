@@ -7,33 +7,26 @@ public class User {
 
     ArrayList<Patient> patients;
 
-    Patient SearchForPatient(Patient patient)
-    {
+    Patient SearchForPatient(Patient patient) {
         return null;
     }
 
-    void ShowPatients()
-    {
-        //shows all patients user has
+    void ShowPatients() {
+        //all of the patients User has
+        ArrayList<PatientInfo> patientInfos = Main.GetInfoFromDB(userID);
     }
 
-    void ShowPatientInfo(int PatientID)
-    {
-
+    void ShowPatientInfo(int patientID) {
+        Info info = Main.GetInfoFromDB(userID, patientID);
     }
 
-    void FillInNewPatientInfo(Patient patient, Info info)
-    {
-
+    void FillInNewPatientInfo(Patient patient, Info info) {
+        Main.AddInfoTODB(userID, patient.patientID, info);
     }
 
-    void ShowPrediction(Patient patient)
-    {
+    void ShowPrediction(Patient patient) {
 
     }
-
-
-
 
 
 }

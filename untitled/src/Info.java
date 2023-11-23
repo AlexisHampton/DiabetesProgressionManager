@@ -40,7 +40,7 @@ public class Info {
         data.add((float) sex);
         data.add( BMI);
         data.add(bloodPressure);
-        data.add(totalCholesterol);
+        data.add(totalSerumCholesterol);
         data.add(lowDensityLipoproteins);
         data.add(highDensityLipoproteins);
         data.add(totalCholesterol);

@@ -1,7 +1,7 @@
 public class Patient {
 
     private Info info;
-    private int patientID;
+    public int patientID;
 
     Info GetInfo(){
         return info;
