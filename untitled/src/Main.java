@@ -24,7 +24,7 @@ public class Main {
             User currentUser = gui.getCurrentUser();
             int patientToSearch = GUI.promptInt("Enter Patient ID to search for a patient: ");
             Patient foundPatient = gui.searchPatient(currentUser, patientToSearch);
-            
+
             if (foundPatient != null) {
                 //create tree
                 RandomForest randomForest = new RandomForest(allInfo);
@@ -35,13 +35,7 @@ public class Main {
                 System.out.println("Patient not found.");
             }
 
-        }    
-
-/*
-        for(int i = 0; i < allInfo.size(); i++)
-            System.out.println(allInfo.geta(i).toString());
-*/
-        
+        }      
     }
 
 
