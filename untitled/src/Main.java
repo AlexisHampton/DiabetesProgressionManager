@@ -5,10 +5,11 @@ import java.util.Scanner;
 public class Main {
 
     public static ArrayList<Info> allInfo = new ArrayList<Info>();
-   private static String userFileName = "userDB.txt";
+    private static ArrayList<Patient> patients = new ArrayList<>();
+
 
     public static void main(String[] args) {
-        //parse diabetes info into info objects
+        
         ParseData();
 /*
         for(int i = 0; i < allInfo.size(); i++)
@@ -17,19 +18,57 @@ public class Main {
         //create tree/
         RandomForest randomForest = new RandomForest(allInfo);
         randomForest.CreateRandomForest();
+        
+        ArrayList<User> users = Authorization.getUsers();
+        GUI gui = new GUI(new Authorization(users));
 
-        /*
-        AddInfoTODB(0, 0, allInfo.get(0));
-        AddInfoTODB(0, 1, allInfo.get(1));
-        AddInfoTODB(0, 2, allInfo.get(2));
-        AddInfoTODB(1, 3, allInfo.get(4));
-*/
-        GetInfoFromDB(0);
+        if (gui.RenderLogin()) {
 
+           //parse diabetes info into info
+            ParseData();
+            assignPatientsToUsers(allInfo, users);
+            gui.RenderPatientSearch();
+
+            User currentUser = gui.getCurrentUser();
+            int patientToSearch = GUI.promptInt("Enter Patient ID to search for a patient: ");
+            Patient foundPatient = gui.searchPatient(currentUser, patientToSearch);
+
+            if (foundPatient != null) {
+                //create tree
+                RandomForest randomForest = new RandomForest(allInfo);
+                randomForest.CreateRandomForest();
+                gui.renderPatientInfo(foundPatient);
+                gui.renderWarning(foundPatient);
+            } else {
+                System.out.println("Patient not found.");
+            }
+
+        }      
     }
 
-    //Reads all the data from the diabetes dataFile and parses it into Info Objects
-    public static void ParseData() {
+
+
+    public static void assignPatientsToUsers(ArrayList<Info> allInfo, ArrayList<User> users) {
+        int patientsPerUser = allInfo.size() / users.size();
+        int counter = 1;
+
+        for (int i = 0; i < users.size(); i++) {
+
+            User doctor = users.get(i);
+
+            for (int j = i * patientsPerUser; j < (i + 1) * patientsPerUser; j++) {
+                Patient patient = new Patient(allInfo.get(j), doctor);
+                patient.setPatientID(counter);
+                doctor.addPatient(patient);
+                counter++;
+            }
+        }
+    }
+
+
+
+    public static void ParseData()
+    {
         try {
             File file = new File("Assignment3_DiabetesData.txt");
             Scanner scanner = new Scanner(file);
