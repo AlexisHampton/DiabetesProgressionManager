@@ -8,8 +8,8 @@ public class DecisionTree {
     ArrayList<Info> trainingData;
     ArrayList<Info> testingData = new ArrayList<Info>();
 
-    int maxDepth = 6;
-    int maxLeaves = 5;
+    int maxDepth = 45;
+    int maxLeaves = 50;
     int leaves, depth = 0;
     int[] featuresIndicies; //the features that have been selected to train the dt
 
@@ -161,7 +161,7 @@ public class DecisionTree {
             if (pred == testingData.get(i).isDiseaseProgressionGood)
                 correct++;
         }
-        //System.out.println("correct: " + correct + " size: " + testingData.size() + " m:" + (correct / (float) testingData.size()));
+        System.out.println("correct: " + correct + " size: " + testingData.size() + " m:" + (correct / (float) testingData.size()));
         return (correct / (float) testingData.size());
     }
 

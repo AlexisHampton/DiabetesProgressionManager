@@ -16,11 +16,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ParseData();
-/*
-        for(int i = 0; i < allInfo.size(); i++)
-            System.out.println(allInfo.geta(i).toString());
-*/
         ArrayList<User> users = Authorization.getUsers();
         GUI gui = new GUI(new Authorization(users));
 
@@ -39,6 +34,7 @@ public class Main {
                 //create tree
                 randomForest = new RandomForest(allInfo);
                 randomForest.CreateRandomForest();
+                randomForest.Validate();
 
                 gui.renderPatientInfo(foundPatient);
                 gui.renderWarning(foundPatient);

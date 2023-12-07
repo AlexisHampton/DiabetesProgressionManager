@@ -13,7 +13,7 @@ public class RandomForest {
     int bsDataSize = 380;
 
     //the data the rf is trained on
-    static ArrayList<Info> allData;
+    static ArrayList<Info> allData = new ArrayList<>();
 
     static Random random = new Random(); //for picking features
 
@@ -23,18 +23,16 @@ public class RandomForest {
     //On initilization, adds the known catFeatures (even though the last is unused)
     // and populates the entire training data dataset
     public RandomForest(ArrayList<Info> ad) {
-        allData = ad;
+        allData = new ArrayList<>(ad);
         catFeatures.add(1);
         catFeatures.add(10);
     }
 
     //adds the ability to set the number of trees
     public RandomForest(ArrayList<Info> ad, int trees, int bsd) {
-        allData = ad;
+        this(ad);
         numTrees = trees;
         bsDataSize = bsd;
-        catFeatures.add(1);
-        catFeatures.add(10);
     }
 
     //Returns the average of all the dataPoints for a given feature
@@ -55,13 +53,10 @@ public class RandomForest {
         }
     }
 
-
     //Creates all of the DecisionTrees
     public void CreateRandomForest() {
         System.out.println("Creating the randomForest");
         System.out.println("Please do not exit the program");
-        //splits the data into 5 segments
-        ArrayList<ArrayList<Info>> dataSegments = SplitData(5);
         for (int i = 0; i < numTrees; i++) {
             ArrayList<Info> trainingData = GetBootStrappedData(bsDataSize);
             ArrayList<Info> testingData = GetTestingData(trainingData);
@@ -100,9 +95,12 @@ public class RandomForest {
 
     public ArrayList<Info> GetTestingData(ArrayList<Info> trainingData) {
         ArrayList<Info> testingData = new ArrayList<>();
-        for (int i = 0; i < allData.size(); i++)
+        for (int i = 0; i < allData.size(); i++) {
+            //System.out.println("ad: " + allData.size()+ " td: " + !trainingData.contains(allData.get(i)) );
             if (!trainingData.contains(allData.get(i)))
                 testingData.add(allData.get(i));
+        }
+        //System.out.println("tds: " +testingData.size());
         return testingData;
     }
 
@@ -113,6 +111,7 @@ public class RandomForest {
     }
 
     public void Validate() {
+        System.out.println("Validating");
         //split the data into 5 groups
         ArrayList<ArrayList<Info>> dataSegments = SplitData(5);
         ArrayList<Integer> correctness = new ArrayList<>();
@@ -129,7 +128,7 @@ public class RandomForest {
 
                 //create tree
                 DecisionTree dt = new DecisionTree(maxFeatures, trainingData, testingData);
-
+                //dt.TestDecisionTree();
                 //put tree in forest
                 decisionTrees.add(dt);
 

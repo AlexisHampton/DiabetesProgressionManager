@@ -10,7 +10,7 @@ public class TestUser {
     {
         User user = new User(1,"user1", "pass1");
         Patient patient = new Patient(TestData.a, user);
-        
+
 
     }
 }
