@@ -34,13 +34,14 @@ public class Main {
                 //create tree
                 randomForest = new RandomForest(allInfo);
                 randomForest.CreateRandomForest();
-                randomForest.Validate();
 
                 gui.renderPatientInfo(foundPatient);
                 gui.renderWarning(foundPatient);
             } else {
                 System.out.println("Main.Patient not found.");
             }
+            System.out.println("\n");
+            randomForest.Validate();
 
         }      
 

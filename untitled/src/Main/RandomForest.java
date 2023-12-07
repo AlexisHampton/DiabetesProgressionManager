@@ -115,6 +115,7 @@ public class RandomForest {
         //split the data into 5 groups
         ArrayList<ArrayList<Info>> dataSegments = SplitData(5);
         ArrayList<Integer> correctness = new ArrayList<>();
+        ArrayList<Float> averages= new ArrayList<>();
         //train and test trees for each
         for (int split = 0; split < 5; split++) {
             ArrayList<Info> trainingData = new ArrayList<>();
@@ -140,9 +141,19 @@ public class RandomForest {
                 if(TestRandomForest(testingData.get(info)))
                     correct++;
             correctness.add(correct);
-            System.out.println("correct: " + correct + "total: " + testingData.size() );
+
+            //prints the average
+            float average = correct/(float) testingData.size();
+            averages.add(average);
+            System.out.println("correct: " + correct + " total: " + testingData.size()  + " average: " + average);
+
+
         }
 
+        float total = 0;
+        for(int i =0; i< averages.size();i++)
+            total+= averages.get(i);
+        System.out.println("Random Forest Accuracy: " + (total/ averages.size()));
     }
 
     public ArrayList<ArrayList<Info>> SplitData(int split) {

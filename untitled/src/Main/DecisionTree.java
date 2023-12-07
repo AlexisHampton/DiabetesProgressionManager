@@ -161,7 +161,7 @@ public class DecisionTree {
             if (pred == testingData.get(i).isDiseaseProgressionGood)
                 correct++;
         }
-        System.out.println("correct: " + correct + " size: " + testingData.size() + " m:" + (correct / (float) testingData.size()));
+       // System.out.println("correct: " + correct + " size: " + testingData.size() + " m:" + (correct / (float) testingData.size()));
         return (correct / (float) testingData.size());
     }
 
