@@ -1,3 +1,5 @@
+package Main;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -7,18 +9,18 @@ public class Main {
     public static ArrayList<Info> allInfo = new ArrayList<Info>();
     private static ArrayList<Patient> patients = new ArrayList<>();
 
+    public  static RandomForest randomForest;
+
+    private static String userFileName = "userDB.txt";
+
 
     public static void main(String[] args) {
-        
+
         ParseData();
 /*
         for(int i = 0; i < allInfo.size(); i++)
             System.out.println(allInfo.geta(i).toString());
 */
-        //create tree/
-        RandomForest randomForest = new RandomForest(allInfo);
-        randomForest.CreateRandomForest();
-        
         ArrayList<User> users = Authorization.getUsers();
         GUI gui = new GUI(new Authorization(users));
 
@@ -30,22 +32,25 @@ public class Main {
             gui.RenderPatientSearch();
 
             User currentUser = gui.getCurrentUser();
-            int patientToSearch = GUI.promptInt("Enter Patient ID to search for a patient: ");
+            int patientToSearch = GUI.promptInt("Enter Main.Patient ID to search for a patient: ");
             Patient foundPatient = gui.searchPatient(currentUser, patientToSearch);
 
             if (foundPatient != null) {
                 //create tree
-                RandomForest randomForest = new RandomForest(allInfo);
+                randomForest = new RandomForest(allInfo);
                 randomForest.CreateRandomForest();
+
                 gui.renderPatientInfo(foundPatient);
                 gui.renderWarning(foundPatient);
             } else {
-                System.out.println("Patient not found.");
+                System.out.println("Main.Patient not found.");
             }
 
         }      
-    }
 
+
+
+    }
 
 
     public static void assignPatientsToUsers(ArrayList<Info> allInfo, ArrayList<User> users) {

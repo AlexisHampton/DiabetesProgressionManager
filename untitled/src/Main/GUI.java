@@ -1,3 +1,5 @@
+package Main;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 public class GUI {
@@ -44,10 +46,10 @@ public class GUI {
             ArrayList<Patient> patients = currentUser.getPatients();
 
             if (patients != null && !patients.isEmpty()) {
-                System.out.println("====Patient Search Results for" + currentUser.getUserName() + ":====");
+                System.out.println("====Main.Patient Search Results for" + currentUser.getUserName() + ":====");
 
                 for (Patient patient : patients) {
-                    System.out.println("Patient ID: " + patient.getPatientID() + ", info: " + patient.getInfo());
+                    System.out.println("Main.Patient ID: " + patient.getPatientID() + ", info: " + patient.getInfo());
                 }
             } 
             else {
@@ -82,8 +84,8 @@ public class GUI {
 
 
     public static void renderPatientInfo(Patient patient) {
-        System.out.println("Patient Information:");
-        System.out.println("Patient ID: " + patient.getPatientID());
+        System.out.println("Main.Patient Information:");
+        System.out.println("Main.Patient ID: " + patient.getPatientID());
         System.out.println("Age: " + patient.getInfo().age);
         System.out.println("Sex: " + patient.getInfo().sex);
         System.out.println("BMI: " + patient.getInfo().BMI);
@@ -107,14 +109,14 @@ public class GUI {
             //boolean progression= patient.predictDiseaseProgression();
 
             if (!User.showPrediction(patient)) {
-                System.out.println("====  Warning for Patient " + patient.getPatientID() + "==== \n" +  "Suggestions that might help:");
+                System.out.println("====  Warning for Main.Patient " + patient.getPatientID() + "==== \n" +  "Suggestions that might help:");
                 System.out.println("Exercise regularly" + "\n" +"Eat healthy " + "\n" + "suggested medications" + "\n" );
             } else {
                 System.out.println("==== Yaaaay ===== \n" + "patient " + patient.getPatientID() + ": You are doing great ");
                 System.out.println("Continue what you have been doing");
             }
         } else {
-            System.out.println("Patient information not available.");
+            System.out.println("Main.Patient information not available.");
         }
     }
 

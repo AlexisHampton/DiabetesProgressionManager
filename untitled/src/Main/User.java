@@ -1,3 +1,5 @@
+package Main;
+
 import java.util.ArrayList;
 
 public class User {
@@ -15,13 +17,8 @@ public class User {
     }
 
 
-    Patient SearchForPatient(Patient patient)
-    {
-        return null;
-    }
-
     void ShowPatients() {
-        //all of the patients User has
+        //all of the patients Main.User has
         ArrayList<PatientInfo> patientInfos = Main.GetInfoFromDB(userID);
     }
 
@@ -30,10 +27,10 @@ public class User {
     }
 
     void FillInNewPatientInfo(Patient patient, Info info)
-    { 
+    {
         if (patient != null && info != null) {
             patient.setInfo(info);
-            System.out.println("Patient information filled in successfully.");
+            System.out.println("Main.Patient information filled in successfully.");
         } else {
             System.out.println("Invalid patient information ");
         }

@@ -1,11 +1,12 @@
+package Main;
+
 import java.util.*;
 
-//Class DecisionTree trains a DecisionTree, Traverses it to get a prediction, and then Tests it to see its correctness
+//Class Main.DecisionTree trains a Main.DecisionTree, Traverses it to get a prediction, and then Tests it to see its correctness
 public class DecisionTree {
 
     ArrayList<Info> trainingData;
     ArrayList<Info> testingData = new ArrayList<Info>();
-    ArrayList<Integer> trainingDataIndicies = new ArrayList<>();
 
     int maxDepth = 6;
     int maxLeaves = 5;
@@ -13,23 +14,36 @@ public class DecisionTree {
     int[] featuresIndicies; //the features that have been selected to train the dt
 
     int maxFeatures;
-
     static Random random = new Random();
-
     ArrayList<Integer> featuresUsed = new ArrayList<Integer>();
-
     DecisionTreeNode root;
 
-    //Initializes a DecisionTree with the max features, training Data and training data indicies, and builds the tree
-    public DecisionTree(int mf, ArrayList<Info> td, ArrayList<Integer> tdi) {
+    //for Junit testing:
+    boolean testing = false;
+    int testFeatureIndex = -1;
+    ArrayList<int[]> testingFeatures = new ArrayList<>();
+
+
+    //Initializes a Main.DecisionTree with the max features, training Data and testing Data, and builds the tree
+    public DecisionTree(int mf, ArrayList<Info> td, ArrayList<Info> testd) {
         maxFeatures = mf;
         trainingData = td;
-        trainingDataIndicies = tdi;
-        featuresIndicies = GetFeatureIndicies();
+        testingData = testd;
+        featuresIndicies = GetFeatureIndicies(new ArrayList<>());
         BuildTree();
     }
 
-    //returns a boolen prediction from the decision tree using a specified Info
+    public DecisionTree(ArrayList<int[]> features, ArrayList<Info> td, ArrayList<Info> testd, DecisionTreeNode r) {
+        testing = true;
+        testingFeatures = features;
+        trainingData = td;
+        testingData = testd;
+        featuresIndicies = GetFeatureIndicies(null);
+        root = r;
+    }
+
+
+    //returns a boolen prediction from the decision tree using a specified Main.Info
     public boolean GetPrediction(Info info) {
         boolean prediction = false;
         DecisionTreeNode curr = root;
@@ -41,7 +55,7 @@ public class DecisionTree {
                 index = (int) (info.data.get(1) - 1); //gets the sex of the patient and subtracts one to get the index
             else if (curr instanceof ContinuousNode)
                 index = ((ContinuousNode) curr).GetChildIndex(info);
-            else //curr is a DecisionTreeNode that hasn't been processed
+            else //curr is a Main.DecisionTreeNode that hasn't been processed
                 return curr.LeafPrediction();
 
             //if current node does not have this child, then check the leaves
@@ -60,7 +74,7 @@ public class DecisionTree {
         return prediction;
     }
 
-    //Builds and returns a DecisionTree based on the best features
+    //Builds and returns a Main.DecisionTree based on the best features
     public DecisionTree BuildTree() {
         PriorityQueue<DecisionTreeNode> heap = new PriorityQueue<DecisionTreeNode>();
 
@@ -80,8 +94,8 @@ public class DecisionTree {
         return this;
     }
 
-    //Finds the best DecisionTreeNode to branch on based on it's total Gini Impurity and returns it
-    DecisionTreeNode FindBestFeature(DecisionTreeNode treeNode) {
+    //Finds the best Main.DecisionTreeNode to branch on based on it's total Gini Impurity and returns it
+    public DecisionTreeNode FindBestFeature(DecisionTreeNode treeNode) {
         DecisionTreeNode bestTreeNode = null;
         float bestImpurity = Float.MAX_VALUE;
         //If we didn't have a dictionary, we'd need two different ArrayLists
@@ -114,7 +128,7 @@ public class DecisionTree {
     }
 
     //Branches on a given node and adds all new DecisionTreeNodes to the heap
-    void Branch(DecisionTreeNode bestNode, PriorityQueue<DecisionTreeNode> heap) {
+    public void Branch(DecisionTreeNode bestNode, PriorityQueue<DecisionTreeNode> heap) {
         ArrayList<DecisionTreeNode> children = new ArrayList<DecisionTreeNode>();
         if (bestNode instanceof CategoricalNode) {
             featuresUsed.add(1);
@@ -140,32 +154,23 @@ public class DecisionTree {
     }
 
     //Tests the decision Tree and prints its accuracy
-    public void TestDecisionTree() {
-        GetTestingData();
+    public float TestDecisionTree() {
         int correct = 0;
         for (int i = 0; i < testingData.size(); i++) {
             boolean pred = GetPrediction(testingData.get(i));
             if (pred == testingData.get(i).isDiseaseProgressionGood)
                 correct++;
         }
-
-        System.out.println("correct: " + correct + " total: " + testingData.size() + " r:" + (correct / (float) testingData.size()));
+        //System.out.println("correct: " + correct + " size: " + testingData.size() + " m:" + (correct / (float) testingData.size()));
+        return (correct / (float) testingData.size());
     }
 
-    //Populates the TestingData list with data not in the trainingData
-    void GetTestingData() {
-        for (int i = 0; i < RandomForest.allData.size(); i++) {
-            if (!trainingDataIndicies.contains(i)) {
-                testingData.add(RandomForest.allData.get(i));
-            }
-        }
-    }
 
     //Returns a random feature index that has not been used already
     int GetRandomFeature(ArrayList<Integer> featuresUsed) {
         int num = random.nextInt(10);
         //if all features have been used, start over
-        if(featuresUsed.size() == 10) featuresUsed.clear();
+        if (featuresUsed.size() == 10) featuresUsed.clear();
         if (featuresUsed == null || featuresUsed.contains(num))
             return GetRandomFeature(featuresUsed);
         return num; //return rand feature index
@@ -173,29 +178,34 @@ public class DecisionTree {
 
     //Returns an array of indicies for features based on the features already used
     int[] GetFeatureIndicies(ArrayList<Integer> featuresUsed) {
+        if (testing) return GetTestingFeatureIndicies();
         int[] fi = new int[maxFeatures];
         for (int i = 0; i < maxFeatures; i++)
             fi[i] = GetRandomFeature(featuresUsed);
         return fi;
     }
 
-    //Returns an array of indicies for features
-    int[] GetFeatureIndicies() {
-        int[] fi = new int[maxFeatures];
-        for (int i = 0; i < maxFeatures; i++)
-            fi[i] = random.nextInt(10);
-        return fi;
+    int[] GetTestingFeatureIndicies() {
+        testFeatureIndex++;
+        return testingFeatures.get(testFeatureIndex % testingFeatures.size());
     }
 
+    @Override
+    public String toString() {
+        String str = "";
+        Stack<DecisionTreeNode> nodes = new Stack<DecisionTreeNode>();
+        nodes.push(root);
+        while (!nodes.isEmpty()) {
+            DecisionTreeNode node = nodes.pop();
+            if (node == null) continue;
+            str +=  node + "\n";
+            for (int i = 0; i < node.children.size(); i++)
+                nodes.push(node.children.get(i));
+            for (int i = 0; i < node.leaves.size(); i++)
+                if (node.leaves.get(0) != null)
+                    str += node.leaves.get(i) + "\n";
+        }
 
-    public void Validate() {
-
+        return str;
     }
-
-
-    int CalculateError() {
-        return 0;
-    }
-
-
 }

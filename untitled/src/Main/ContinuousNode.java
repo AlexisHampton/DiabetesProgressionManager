@@ -1,18 +1,20 @@
+package Main;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 
-//Class ContinuousNode Branches, calulates its totalGiniImpurity, and creates leaves if it needs
+//Class Main.ContinuousNode Branches, calulates its totalGiniImpurity, and creates leaves if it needs
 public class ContinuousNode extends DecisionTreeNode {
 
     float splitCriteria;
     int currentFeature = 0; //needed for traversing
 
-    //Initializes a ContinuousNode based on a list of Info
+    //Initializes a Main.ContinuousNode based on a list of Main.Info
     public ContinuousNode(ArrayList<Info> dp) {
         super(dp);
     }
 
-    //Creates a ContinuousNode out of a DecisionTreeNode
+    //Creates a Main.ContinuousNode out of a Main.DecisionTreeNode
     public ContinuousNode(DecisionTreeNode node) {
         super(node.dataPoints);
         super.children = node.children;
@@ -22,6 +24,16 @@ public class ContinuousNode extends DecisionTreeNode {
         super.childIndex = node.childIndex;
     }
 
+    //for testing purposes
+    public ContinuousNode(ArrayList<Info> dp, DecisionTreeNode parent, ArrayList<DecisionTreeNode> children, ArrayList<DecisionTreeLeaf> leaves, int ci,int feature,  float splitC) {
+        super(dp);
+        super.children = children;
+        super.leaves = leaves;
+        super.parent = parent;
+        super.childIndex = ci;
+        currentFeature = feature;
+        splitCriteria = splitC;
+    }
     //Returns a list of DecisionTreeNodes after it has branched based off of splitCriteria
     public ArrayList<DecisionTreeNode> Branch() {
 
@@ -57,13 +69,9 @@ public class ContinuousNode extends DecisionTreeNode {
 
     }
 
-    //returns the totalGiniImpurity based off the specified feature
-    public float CalculateTotalGiniImpurity(int feature) {
-        return CreateTempLeaves(feature);
-    }
-
     //returns the best totalGiniImpurity after trying all possible splits for a given feature
-    float CreateTempLeaves(int feature) {
+    public float CalculateTotalGiniImpurity(int feature) {
+
         super.tempLeaves.clear(); //to avoid data corruption
         currentFeature = feature;
         super.dataPoints.sort(new DataPointComparator());
@@ -122,16 +130,27 @@ public class ContinuousNode extends DecisionTreeNode {
         return super.CalculateTotalGiniImpurity();
     }
 
+    //----used for testing purposes------
+    public void SetSplitCriteria(float sc)
+    {
+        splitCriteria = sc;
+    }
+    //----used for testing purposes------
+    public void SetFeature(int feature){
+        currentFeature =feature;
+    }
+
     //returns an index of the child that should be traversed
     //0 for less than
     //1 for greater than equal
-    int GetChildIndex(Info info) {
+    public int GetChildIndex(Info info) {
         return info.data.get(currentFeature) < splitCriteria ? 0 : 1;
     }
 
     //for debugging purposes, might delete when project is finished
     @Override
     public String toString() {
-        return "continous sc " + splitCriteria + " c:" + super.children.size() + " l:" + super.leaves.size() + " d:" + super.dataPoints.size();
+        NameLeaves();
+        return super.GetName() + " = continuousNode{ ,splitCriteria: " + splitCriteria + ", currentFeature:" + currentFeature +", children: " + super.children.size() + ", leaves: " + super.leaves.size() + "}";
     }
 }

@@ -1,4 +1,5 @@
-import java.util.ArrayList;
+package Main;
+
 public class Patient {
 
     private Info info;
@@ -29,7 +30,7 @@ public class Patient {
 
     boolean predictDiseaseProgression()
     {
-        return RandomForest.GetPrediction(info);
+        return Main.randomForest.GetPrediction(info);
     }
 
     void FillMissingData()

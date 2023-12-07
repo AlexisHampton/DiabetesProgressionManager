@@ -1,6 +1,8 @@
+package Main;
+
 import java.util.ArrayList;
 
-//CategoricalNode can Branch, calculate its own impurity, and create Children if it needs
+//Main.CategoricalNode can Branch, calculate its own impurity, and create Children if it needs
 public class CategoricalNode extends DecisionTreeNode {
 
     int numCatFeatures = 2; //since we only have one categorical node we can cheat
@@ -49,13 +51,8 @@ public class CategoricalNode extends DecisionTreeNode {
         return super.children;
     }
 
-    //returns the totalGiniImpurity based off of the currentFeature
-    public float CalculateTotalGiniImpurity(int feature) {
-        return CreateTempLeaves(feature);
-    }
-
     //returns the total GiniImpurity based off the current feature and the tempLeaves it made out of it
-    float CreateTempLeaves(int feature) {
+    public float CalculateTotalGiniImpurity(int feature) {
         super.tempLeaves.clear(); //to make sure no data gets corrupted
 
         //initialize tempLeaves for each branch
@@ -84,7 +81,8 @@ public class CategoricalNode extends DecisionTreeNode {
     //but stays just in case
     @Override
     public String toString() {
-        return "categorical nc" + numCatFeatures + " c:" + super.children.size() + " l:" + super.leaves.size() + " d:" +  super.dataPoints.size();
+        NameLeaves();
+        return super.GetName() + " = categoricalNode{ children: " + super.children.size() + ", leaves:" + super.leaves.size()+"}";
     }
 
 }

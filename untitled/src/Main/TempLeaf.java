@@ -1,11 +1,13 @@
-//Class TempLeaf creates a temporary leaf, which counts the amount of yes's and no's for a particular branch of a DecisionTreeNode
+package Main;
+
+//Class Main.TempLeaf creates a temporary leaf, which counts the amount of yes's and no's for a particular branch of a Main.DecisionTreeNode
 //Used to calculate the impurity of the branch and nothing more
 public class TempLeaf {
 
     float yes;
     float no;
 
-    //Initializes TempLeaf with a yes and no value
+    //Initializes Main.TempLeaf with a yes and no value
     public TempLeaf(int y, int n){
         yes = y;
         no = n;
