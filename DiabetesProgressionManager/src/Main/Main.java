@@ -9,7 +9,7 @@ public class Main {
     public static ArrayList<Info> allInfo = new ArrayList<Info>();
     private static ArrayList<Patient> patients = new ArrayList<>();
 
-    public  static RandomForest randomForest;
+    public static RandomForest randomForest;
 
     private static String userFileName = "userDB.txt";
 
@@ -21,7 +21,7 @@ public class Main {
 
         if (gui.RenderLogin()) {
 
-           //parse diabetes info into info
+            //parse diabetes info into info
             ParseData();
             assignPatientsToUsers(allInfo, users);
             Options();
@@ -29,7 +29,7 @@ public class Main {
     }
 
 
-    public static void Options (){
+    public static void Options() {
 
         GUI.RenderPatientSearch();
         User currentUser = GUI.getCurrentUser();
@@ -65,7 +65,13 @@ public class Main {
 
                         break;
                     case 2:
-                        GUI.RenderPatientFillIn();
+                        patientToSearch = GUI.promptInt("Enter Patient ID to search for a patient: ");
+                        foundPatient = GUI.searchPatient(currentUser, patientToSearch);
+                        if (foundPatient != null) {
+                            GUI.RenderPatientFillIn(foundPatient);
+                        } else {
+                            System.out.println("Patient not found. Cannot update Patient Info");
+                        }
                         break;
                     case 3:
                         GUI.RenderUpdatePatient();
@@ -102,9 +108,7 @@ public class Main {
     }
 
 
-
-    public static void ParseData()
-    {
+    public static void ParseData() {
         try {
             File file = new File("Assignment3_DiabetesData.txt");
             Scanner scanner = new Scanner(file);
@@ -138,20 +142,18 @@ public class Main {
     //Adds the info from a specified userID of a specified patientID and info object to the database
     public static void AddInfoTODB(int userId, int patientID, Info info) {
         String data = userId + " " + patientID + " ";
-        for(int i = 0; i < info.data.size();i++)
+        for (int i = 0; i < info.data.size(); i++)
             data += info.data.get(i) + " ";
-        data += info.isDiseaseProgressionGood +  "\n";
-        try{
+        data += info.isDiseaseProgressionGood + "\n";
+        try {
             //appends to the end of the file
             FileWriter writer = new FileWriter(userFileName, true);
             BufferedWriter bufferedWriter = new BufferedWriter(writer);
-           bufferedWriter.write(data);
+            bufferedWriter.write(data);
             bufferedWriter.close();
             System.out.println("Successfully wrote patient: " + patientID + "\'s info to the database");
-        }
-        catch (IOException e)
-        {
-            System.out.println("An error occurred when writing patient: "+ patientID + "\'s info to " + userFileName);
+        } catch (IOException e) {
+            System.out.println("An error occurred when writing patient: " + patientID + "\'s info to " + userFileName);
             System.out.println(e.getMessage());
         }
 
@@ -160,17 +162,15 @@ public class Main {
 
     //Returns the info from a specifiec userID of a specified patientID
     public static Info GetInfoFromDB(int userID, int patientID) {
-        try{
+        try {
             File file = new File(userFileName);
             Scanner scanner = new Scanner(file);
 
-            while(scanner.hasNextLine())
-            {
+            while (scanner.hasNextLine()) {
                 //splits on spaces
                 String[] data = scanner.nextLine().split("\\s+");
                 //if the ids match
-                if(userID == Integer.parseInt(data[0]) && patientID == Integer.parseInt(data[1]))
-                {
+                if (userID == Integer.parseInt(data[0]) && patientID == Integer.parseInt(data[1])) {
                     Info info = new Info(
                             (int) Float.parseFloat(data[2]), //age
                             (int) Float.parseFloat(data[3]), //sex
@@ -188,9 +188,7 @@ public class Main {
                     return info;
                 }
             }
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
 
@@ -201,17 +199,15 @@ public class Main {
     //Returns an arraylist of patientInfos from a specified userID
     //This gets all the patientInfos for one specific user
     public static ArrayList<PatientInfo> GetInfoFromDB(int userID) {
-        try{
+        try {
             File file = new File(userFileName);
             Scanner scanner = new Scanner(file);
             ArrayList<PatientInfo> patientInfos = new ArrayList<>();
 
-            while(scanner.hasNextLine())
-            {
+            while (scanner.hasNextLine()) {
                 //splits on spaces
                 String[] data = scanner.nextLine().split("\\s+");
-                if(userID == Integer.parseInt(data[0]))
-                {
+                if (userID == Integer.parseInt(data[0])) {
 
                     PatientInfo patientInfo = new PatientInfo(
                             Integer.parseInt(data[1]), //patientID
@@ -232,9 +228,7 @@ public class Main {
                 }
             }
             return patientInfos;
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
 

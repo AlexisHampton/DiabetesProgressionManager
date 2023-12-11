@@ -74,7 +74,7 @@ public class DecisionTree {
         return prediction;
     }
 
-    //Builds and returns a Main.DecisionTree based on the best features
+    //Builds and returns a DecisionTree based on the best features
     public DecisionTree BuildTree() {
         PriorityQueue<DecisionTreeNode> heap = new PriorityQueue<DecisionTreeNode>();
 
@@ -185,11 +185,14 @@ public class DecisionTree {
         return fi;
     }
 
+    //returns an array int for the next set of feature indices
+    //----for testing purposes
     int[] GetTestingFeatureIndicies() {
         testFeatureIndex++;
         return testingFeatures.get(testFeatureIndex % testingFeatures.size());
     }
 
+    //uses depth first search to print out the tree
     @Override
     public String toString() {
         String str = "";

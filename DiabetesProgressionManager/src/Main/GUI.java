@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 public class GUI {
     
-    private User currentUser;
+    private static  User currentUser;
     private static Authorization authorization;
     private static Scanner scanner = new Scanner(System.in);
 
-    public User getCurrentUser() {
+    public static User getCurrentUser() {
         return currentUser;
     }
 
@@ -41,7 +41,7 @@ public class GUI {
     }
 
 
-    public void RenderPatientSearch() {
+    public static void RenderPatientSearch() {
         if (currentUser != null) {
             ArrayList<Patient> patients = currentUser.getPatients();
 
@@ -61,7 +61,7 @@ public class GUI {
     
 
 
-    public Patient searchPatient(User user, int patientID) {
+    public static Patient searchPatient(User user, int patientID) {
         ArrayList<Patient> patients = user.getPatients();
 
         if (patients != null && !patients.isEmpty()) {
