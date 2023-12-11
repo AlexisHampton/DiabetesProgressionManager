@@ -24,27 +24,61 @@ public class Main {
            //parse diabetes info into info
             ParseData();
             assignPatientsToUsers(allInfo, users);
-            gui.RenderPatientSearch();
+            Options();
+        }
+    }
 
-            User currentUser = gui.getCurrentUser();
-            int patientToSearch = GUI.promptInt("Enter Main.Patient ID to search for a patient: ");
-            Patient foundPatient = gui.searchPatient(currentUser, patientToSearch);
 
-            if (foundPatient != null) {
-                //create tree
-                randomForest = new RandomForest(allInfo);
-                randomForest.CreateRandomForest();
+    public static void Options (){
 
-                gui.renderPatientInfo(foundPatient);
-                gui.renderWarning(foundPatient);
-            } else {
-                System.out.println("Main.Patient not found.");
-            }
-            System.out.println("\n");
-            randomForest.Validate();
+        GUI.RenderPatientSearch();
+        User currentUser = GUI.getCurrentUser();
 
-        }      
+        if (currentUser != null) {
+            int option;
+            do {
+                System.out.println("==== Options ====");
+                System.out.println("1. Search for Patient");
+                System.out.println("2. Register New Patient");
+                System.out.println("3. Update Patient Information");
+                System.out.println("4. Exit");
 
+                option = GUI.promptInt("Choose an option (1-4): ");
+
+                switch (option) {
+                    case 1:
+                        int patientToSearch = GUI.promptInt("Enter Patient ID to search for a patient: ");
+                        Patient foundPatient = GUI.searchPatient(currentUser, patientToSearch);
+
+                        if (foundPatient != null) {
+                            //create tree
+                            randomForest = new RandomForest(allInfo);
+                            randomForest.CreateRandomForest();
+
+                            GUI.renderPatientInfo(foundPatient);
+                            GUI.renderWarning(foundPatient);
+                        } else {
+                            System.out.println("Patient not found.");
+                        }
+                        System.out.println("\n");
+                        randomForest.Validate();
+
+                        break;
+                    case 2:
+                        GUI.RenderPatientFillIn();
+                        break;
+                    case 3:
+                        GUI.RenderUpdatePatient();
+                        break;
+                    case 4:
+                        System.out.println("Exiting the program...");
+                        break;
+                    default:
+                        System.out.println("Invalid option. Please try again.");
+                }
+
+            } while (option != 4);
+        }
 
 
     }

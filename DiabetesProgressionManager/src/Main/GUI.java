@@ -81,6 +81,18 @@ public class GUI {
         return scanner.nextInt();
     }
 
+    private static boolean promptBoolean (String message) { 
+        System.out.print(message); 
+        return scanner.nextBoolean(); 
+        } 
+         
+        
+       private static float promptFloat (String message) { 
+        System.out.print(message); 
+        return scanner.nextFloat(); 
+        } 
+       
+
 
 
     public static void renderPatientInfo(Patient patient) {
@@ -123,8 +135,84 @@ public class GUI {
 
    public static void RenderPatientFillIn(Patient patient)
     {
+        if (currentUser != null) {
+            // Get the user's patients
+            ArrayList<Patient> patients = currentUser.getPatients();
 
+            // Calculate the new patient ID based on the existing patients for the user
+            int newPatientID = patients.size() > 0 ? patients.get(patients.size() - 1).getPatientID() + 1 : 1;
+
+            System.out.println("==== Register New Patient ====");
+
+            // Collect information for the new patient using getPatientInfo method
+            Info newPatientInfo = getPatientInfo();
+
+            // Create a new patient
+            Patient newPatient = new Patient(newPatientInfo, currentUser);
+            newPatient.setPatientID(newPatientID);
+
+            // Add the new patient to the user's list
+            currentUser.addPatient(newPatient);
+
+
+            // Add the new patient's info to the database
+            Main.AddInfoTODB(currentUser.getUserID(), newPatientID, newPatientInfo);
+
+            System.out.println("New patient registered successfully!");
+        }
     }
+
+    private static Info getPatientInfo () {
+        System.out.println("==== Enter Patient Information ====");
+
+        int age = promptInt("Enter age: ");
+        int sex = promptInt("Enter sex (1 for male, 2 for female): ");
+        float bmi = promptFloat("Enter BMI: ");
+        float bloodPressure = promptFloat("Enter blood pressure: ");
+        int totalSerumCholesterol = promptInt("Enter total serum cholesterol: ");
+        float lowDensityLipoproteins = promptFloat("Enter low-density lipoproteins: ");
+        float highDensityLipoproteins = promptFloat("Enter high-density lipoproteins: ");
+        float totalCholesterol = promptFloat("Enter total cholesterol: ");
+        float possibilityLogOfSerumTriglycerides = promptFloat("Enter possibility log of serum triglycerides level: ");
+        int bloodSugarLevel = promptInt("Enter blood sugar level: ");
+        boolean isDiseaseProgressionGood = promptBoolean("Is disease progression good? (true/false): ");
+
+        return new Info(
+                age, sex, bmi, bloodPressure, totalSerumCholesterol, lowDensityLipoproteins,
+                highDensityLipoproteins, totalCholesterol, possibilityLogOfSerumTriglycerides, bloodSugarLevel,
+                isDiseaseProgressionGood
+        );
+    }
+
+    public static void RenderUpdatePatient () {
+        if (currentUser != null) {
+            // Get the user's patients
+            ArrayList<Patient> patients = currentUser.getPatients();
+
+            // Display patients for the user to choose from
+            RenderPatientSearch();
+
+            // Prompt user to select a patient to update
+            int patientIDToUpdate = promptInt("Enter Patient ID to update: ");
+            Patient patientToUpdate = searchPatient(currentUser, patientIDToUpdate);
+
+            if (patientToUpdate != null) {
+                // Collect updated information for the patient
+                Info updatedPatientInfo = getPatientInfo();
+
+                // Update the patient's information
+                patientToUpdate.setInfo(updatedPatientInfo);
+
+                // Update the patient's information in the database
+                Main.AddInfoTODB(currentUser.getUserID(), patientIDToUpdate, updatedPatientInfo);
+
+                System.out.println("Patient information updated successfully!");
+            } else {
+                System.out.println("Patient not found.");
+            }
+        }
+    }
+
 
     public static void RenderDecision(Patient patient, boolean decision)
     {
