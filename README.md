@@ -1,5 +1,4 @@
 # DiabetesProgressionManager
----- This project is a WIP ----
  A Patient Diabetes Progression Predictor using a Random Forest and <a href="https://scikit-learn.org/stable/datasets/toy_dataset.html"> SciKit's Diabetes Dataset </a>. It allows Users (doctors) to log in and predict their patient's diabetes progression based on new data such as age, total cholesterol, BMI, and blood sugar levels. 
  
  This project was made by:
