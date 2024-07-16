@@ -6,4 +6,3 @@
 <br> <a href="https://github.com/bilques">Bilques Jan</a>: who coded the user interactions and database logic,
 <br> and <a href="https://github.com/ayshamukhtar">Aysha Mukhtar</a>: who handled the client communications and helped manage the entire project.
 
-Together we each created a project that is not finished. It is still a work in progress and will hopefully be finished by the end of the semester. 
